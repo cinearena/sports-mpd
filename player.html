@@ -1,93 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shaka Player - Sports</title>
 
-  <!-- Shaka Player -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js"></script>
 
-  <style>
-    body {
-      background: #000;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    #video {
-      width: 100%;
-      height: auto;
-      max-height: 100vh;
-      background: #000;
-      outline: none;
-    }
-    .loader {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #0af;
-      font-size: 18px;
-    }
-  </style>
-</head>
-<body>
 
-<div class="loader" id="loader">Loading Stream...</div>
 
-<video id="video" autoplay controls playsinline></video>
 
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
 
-    const params = new URLSearchParams(window.location.search);
 
-    // Decode MPD URL
-    const encodedUrl = params.get("url");
-    const url = decodeURIComponent(encodedUrl);
 
-    // DRM Keys
-    const k1 = params.get("k1");
-    const k2 = params.get("k2");
 
-    const video = document.getElementById('video');
-    const loader = document.getElementById('loader');
 
-    // Initialize Shaka
-    shaka.polyfill.installAll();
-    if (!shaka.Player.isBrowserSupported()) {
-        alert("Browser Not Supported!");
-        return;
-    }
 
-    const player = new shaka.Player(video);
 
-    // Configure ClearKey DRM
-    player.configure({
-        drm: {
-            clearKeys: {
-                [k1]: k2
-            }
-        }
-    });
 
-    try {
-        await player.load(url);
-        loader.style.display = "none";
-        console.log("Playing Stream:", url);
-    } catch (error) {
-        loader.style.color = "red";
-        loader.innerText = "Failed to Load Stream!";
-        console.error(error);
-    }
 
-});
-</script>
 
-</body>
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>TV4WAP LIVE4WAP JSPO</title> 
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const streamId = urlParams.get('id');
+            
+            if (!streamId) return;
+            
+            fetch('https://tvgo.neocities.org/Json/jspo.txt')
+                .then(response => response.json())
+                .then(data => {
+                    const streamInfo = data.find(item => item.name === streamId);
+                    if (!streamInfo) return;
+                    
+                    const iframe = document.getElementById('stream-iframe');
+                    if (streamInfo.name && streamInfo.name) {
+                    const logo = encodeURIComponent(streamInfo.name)
+                    
+                        const url = encodeURIComponent(streamInfo.id);
+                                         const key1 = encodeURIComponent(streamInfo.id1);
+                                          const key2 = encodeURIComponent(streamInfo.id2);
+
+                        
+iframe.src =`https://jall.pages.dev/?url=${url}&keyId=${key1}&key=${key2}`;
+                    } else if (streamInfo.m3u8) {
+                        iframe.src = streamInfo.m3u8;
+                    }
+                });
+        });
+    </script> 
+ </head> 
+
+ <body style="position:absolute;margin: 0; padding: 0; height: 100%;width:100%;background:#000"> 
+  <iframe id="stream-iframe" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" loading="lazy" allowfullscreen ></iframe> 
+ </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
