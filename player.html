@@ -18,47 +18,54 @@
   <video id="video" controls autoplay></video>
 </div>
 
+
 <script>
-  async function startPlayer() {
+  function getParam(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
 
-    // Get Channel Details From URL
-    const url = new URLSearchParams(window.location.search);
-    const stream = url.get("url");
-    const keyId = url.get("id1");
-    const key = url.get("id2");
-
-    if(!stream || !keyId || !key){
-      alert("URL Missing! Example:\nplayer.html?url=LINK&id1=KEYID&id2=KEYVALUE");
-      return;
-    }
-
+  async function initPlayer() {
     const video = document.getElementById('video');
     const player = new shaka.Player(video);
 
-    // Attach Player
-    window.player = player;
+    const streamUrl = getParam('url');
+    const keyId    = getParam('id1');
+    const keyVal   = getParam('id2');
 
-    // DRM ClearKey Setup
+    if (!streamUrl || !keyId || !keyVal) {
+      alert('Missing parameters: url, id1 or id2');
+      return;
+    }
+
+    // ClearKey configuration
     player.configure({
       drm: {
         clearKeys: {
-          [keyId]: key
+          [keyId]: keyVal
         }
       }
     });
 
     try {
-      await player.load(stream);
-      console.log("Playing Successfully ✅");
-    } 
-    catch (error) {
-      console.error("Playback Error ❌", error);
-      alert("Stream cannot be played.");
+      await player.load(streamUrl);
+      console.log('Playback started ✅');
+    } catch (e) {
+      console.error('Error loading stream:', e);
+      alert('Playback error: ' + e.message);
     }
   }
 
-  document.addEventListener('DOMContentLoaded', startPlayer);
+  document.addEventListener('DOMContentLoaded', () => {
+    // polyfill for older browsers
+    shaka.polyfill.installAll();
+    if (shaka.Player.isBrowserSupported()) {
+      initPlayer();
+    } else {
+      alert('Browser not supported by Shaka Player');
+    }
+  });
 </script>
+
 
 </body>
 </html>
