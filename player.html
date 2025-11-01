@@ -1,51 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Watch Live</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Sports Player</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
-
-<style>
-body { margin:0; background:black; }
-video { width:100vw; height:100vh; }
-</style>
+  <style>
+    body { margin: 0; background: #000; }
+    #player-container { width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center;}
+    video { width: 100%; height: 100%; background: #000; }
+  </style>
 </head>
+
 <body>
 
-<video id="video" controls autoplay></video>
+<div id="player-container">
+  <video id="video" controls autoplay></video>
+</div>
 
 <script>
-function getParam(key){
-  return new URLSearchParams(window.location.search).get(key);
-}
+  async function startPlayer() {
 
-const url = getParam("url");
-const key1 = getParam("k1");
-const key2 = getParam("k2");
+    // Get Channel Details From URL
+    const url = new URLSearchParams(window.location.search);
+    const stream = url.get("url");
+    const keyId = url.get("id1");
+    const key = url.get("id2");
 
-async function initPlayer(){
-  const video = document.getElementById('video');
-  const player = new shaka.Player(video);
-
-  // DRM Key Setup
-  player.configure({
-    drm: {
-      clearKeys: {
-        [key1]: key2
-      }
+    if(!stream || !keyId || !key){
+      alert("URL Missing! Example:\nplayer.html?url=LINK&id1=KEYID&id2=KEYVALUE");
+      return;
     }
-  });
 
-  try {
-    await player.load(url);
-    console.log("Stream Loaded ✅");
-  } catch (e) {
-    console.error("Error loading stream ❌", e);
+    const video = document.getElementById('video');
+    const player = new shaka.Player(video);
+
+    // Attach Player
+    window.player = player;
+
+    // DRM ClearKey Setup
+    player.configure({
+      drm: {
+        clearKeys: {
+          [keyId]: key
+        }
+      }
+    });
+
+    try {
+      await player.load(stream);
+      console.log("Playing Successfully ✅");
+    } 
+    catch (error) {
+      console.error("Playback Error ❌", error);
+      alert("Stream cannot be played.");
+    }
   }
-}
 
-document.addEventListener('DOMContentLoaded', initPlayer);
+  document.addEventListener('DOMContentLoaded', startPlayer);
 </script>
 
 </body>
