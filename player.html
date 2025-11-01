@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watch Live</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
+
+<style>
+body { margin:0; background:black; }
+video { width:100vw; height:100vh; }
+</style>
+</head>
+<body>
+
+<video id="video" controls autoplay></video>
+
+<script>
+function getParam(key){
+  return new URLSearchParams(window.location.search).get(key);
+}
+
+const url = getParam("url");
+const key1 = getParam("k1");
+const key2 = getParam("k2");
+
+async function initPlayer(){
+  const video = document.getElementById('video');
+  const player = new shaka.Player(video);
+
+  // DRM Key Setup
+  player.configure({
+    drm: {
+      clearKeys: {
+        [key1]: key2
+      }
+    }
+  });
+
+  try {
+    await player.load(url);
+    console.log("Stream Loaded ✅");
+  } catch (e) {
+    console.error("Error loading stream ❌", e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initPlayer);
+</script>
+
+</body>
+</html>
