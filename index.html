@@ -19,7 +19,8 @@ body { background:#121212; color:white; font-family: Arial; }
 
 <script>
 async function loadChannels(){
-  const url = "https://tvgo.neocities.org/Json/jspo.txt"; // Change this
+  const url = "https://raw.githubusercontent.com/cinearena/sports-mpd/main/data.json
+"; // Change this
   const res = await fetch(url);
   const data = await res.json();
   const container = document.getElementById("channels");
