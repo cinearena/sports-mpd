@@ -19,7 +19,7 @@ body { background:#121212; color:white; font-family: Arial; }
 
 <script>
 async function loadChannels(){
-  const url = "https://raw.githubusercontent.com/USERNAME/REPO/main/sports-channels.json"; // Change this
+  const url = "https://tvgo.neocities.org/Json/jspo.txt"; // Change this
   const res = await fetch(url);
   const data = await res.json();
   const container = document.getElementById("channels");
